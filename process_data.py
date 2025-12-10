@@ -21,3 +21,25 @@ def process_data(ticker, full_df):
   market_price_change_price_change = scaler.fit_transform(market_price_change.reshape(-1, 1))
 
   return offender_price_change, industry_price_change, market_price_change
+
+
+def process_data_with_external_offender_array(full_df, offender_array, offender_industry_code):
+  full_df['price_change_percent'] = full_df['prccd'].pct_change().fillna(0)
+  industry_df = full_df[(full_df['gind'] == offender_industry_code)].copy().sort_values('datadate')
+  market_df = full_df[full_df['gind'] != offender_industry_code].copy().sort_values('datadate')
+  axis = np.linspace(0, industry_df['prccd'].size, industry_df['prccd'].size)
+
+  industry_price_change = industry_df[['datadate', 'price_change_percent']].copy().groupby('datadate').mean()
+  market_price_change = market_df[['datadate', 'price_change_percent']].copy().groupby('datadate').mean()
+
+  offender_price_change = np.array(offender_array)
+  industry_price_change = np.array(industry_price_change['price_change_percent'])
+  market_price_change = np.array(market_price_change['price_change_percent'])
+
+  #z-score normalize data
+  scaler = StandardScaler()
+  offender_price_change = scaler.fit_transform(np.array(offender_array).reshape(-1, 1))
+  industry_price_change_price_change = scaler.fit_transform(industry_price_change.reshape(-1, 1))
+  market_price_change_price_change = scaler.fit_transform(market_price_change.reshape(-1, 1))
+
+  return offender_price_change, industry_price_change[:offender_price_change.shape[0]], market_price_change[:offender_price_change.shape[0]]
