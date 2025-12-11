@@ -1,4 +1,4 @@
-def plot_observations(offender_ticker, treatment_index, offender_price_change, sector_price_change, market_price_change, counterfactual_estimates, left_cutoff, right_cutoff):
+def plot_observations(offender_ticker, treatment_index, offender_price_change, sector_price_change, market_price_change, left_cutoff, right_cutoff):
   axis = np.linspace(0, offender_price_change.shape[0], offender_price_change.shape[0])
   plt.plot(axis[left_cutoff:right_cutoff], offender_price_change[left_cutoff:right_cutoff], color='orange', label=f"{offender_ticker}")
   plt.plot(axis[left_cutoff:right_cutoff], sector_price_change[left_cutoff:right_cutoff], color='green', label="Observed Sector")
